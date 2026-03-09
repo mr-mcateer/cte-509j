@@ -1,0 +1,1163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>509j CTE Alignment Dashboard</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap');
+:root {
+  --bg: #0b0d11; --bg2: #13151c; --card: #191c27; --card2: #1e2230;
+  --border: #262a38; --blue: #4f8cff; --cyan: #00d4ff; --purple: #a855f7;
+  --gold: #f59e0b; --green: #10b981; --red: #ef4444; --pink: #ec4899;
+  --text: #e8e8f0; --text2: #8b8da0; --muted: #555670;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);line-height:1.6;overflow-x:hidden}
+
+/* Nav */
+nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(11,13,17,0.92);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);height:56px;display:flex;align-items:center;padding:0 1.5rem;gap:1rem}
+.nav-brand{font-weight:800;font-size:.85rem;color:var(--blue);letter-spacing:1px;white-space:nowrap}
+.nav-links{display:flex;gap:.15rem;overflow-x:auto;flex:1}
+.nav-links a{color:var(--text2);text-decoration:none;font-size:.72rem;font-weight:500;padding:.35rem .6rem;border-radius:5px;white-space:nowrap;transition:all .2s}
+.nav-links a:hover,.nav-links a.active{color:var(--text);background:rgba(79,140,255,0.08)}
+
+/* Layout */
+.container{max-width:1280px;margin:0 auto;padding:5rem 1.5rem 3rem}
+section{margin-bottom:4rem}
+.sec-label{font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:2.5px;color:var(--blue);margin-bottom:.5rem}
+.sec-title{font-size:clamp(1.5rem,3.5vw,2.2rem);font-weight:800;letter-spacing:-.5px;margin-bottom:.5rem;line-height:1.2}
+.sec-desc{color:var(--text2);font-size:.9rem;max-width:700px;margin-bottom:2rem}
+
+/* Cards */
+.grid{display:grid;gap:1rem}
+.grid-2{grid-template-columns:repeat(auto-fit,minmax(380px,1fr))}
+.grid-3{grid-template-columns:repeat(auto-fit,minmax(300px,1fr))}
+.grid-4{grid-template-columns:repeat(auto-fit,minmax(250px,1fr))}
+.card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1.5rem;transition:all .2s}
+.card:hover{border-color:rgba(79,140,255,0.25);transform:translateY(-1px)}
+.card h3{font-size:.95rem;font-weight:700;margin-bottom:.4rem}
+.card p{font-size:.8rem;color:var(--text2);line-height:1.55}
+.card-sm{padding:1.15rem}
+
+/* Tags */
+.tag{display:inline-block;padding:.12rem .45rem;border-radius:4px;font-size:.65rem;font-weight:600;margin-right:.25rem;margin-bottom:.25rem}
+.t-cte{background:rgba(79,140,255,0.12);color:var(--blue)}
+.t-ap{background:rgba(168,85,247,0.12);color:var(--purple)}
+.t-cn{background:rgba(16,185,129,0.12);color:var(--green)}
+.t-gap{background:rgba(239,68,68,0.1);color:var(--red)}
+.t-strong{background:rgba(16,185,129,0.1);color:var(--green)}
+.t-warn{background:rgba(245,158,11,0.1);color:var(--gold)}
+.t-core{background:rgba(100,100,120,0.15);color:var(--text2)}
+.t-shared{background:rgba(0,212,255,0.1);color:var(--cyan)}
+.t-health{background:rgba(236,72,153,0.1);color:var(--pink)}
+
+/* Tables */
+.tbl-wrap{overflow-x:auto;border-radius:10px;border:1px solid var(--border)}
+table{width:100%;border-collapse:collapse;font-size:.78rem}
+thead{background:rgba(79,140,255,0.05)}
+th{text-align:left;padding:.7rem .85rem;font-weight:600;color:var(--text2);font-size:.68rem;text-transform:uppercase;letter-spacing:.8px;border-bottom:1px solid var(--border)}
+td{padding:.6rem .85rem;border-bottom:1px solid rgba(255,255,255,0.025)}
+tbody tr:hover{background:rgba(79,140,255,0.03)}
+
+/* Tabs */
+.tab-nav{display:flex;gap:.2rem;border-bottom:1px solid var(--border);margin-bottom:1.25rem;overflow-x:auto}
+.tab-btn{padding:.6rem 1rem;border:none;background:none;color:var(--text2);font-size:.78rem;font-weight:600;cursor:pointer;border-bottom:2px solid transparent;transition:all .2s;font-family:inherit;white-space:nowrap}
+.tab-btn:hover{color:var(--text)}
+.tab-btn.active{color:var(--blue);border-bottom-color:var(--blue)}
+.tab-content{display:none}
+.tab-content.active{display:block;animation:fadeIn .3s}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+
+/* Stat row */
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:.75rem;margin-bottom:2rem}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:1rem;text-align:center}
+.stat-val{font-size:1.6rem;font-weight:800;background:linear-gradient(135deg,var(--blue),var(--cyan));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.stat-label{font-size:.62rem;color:var(--text2);font-weight:600;text-transform:uppercase;letter-spacing:.8px;margin-top:.15rem}
+
+/* Bars */
+.bar-row{display:flex;align-items:center;gap:.75rem;margin-bottom:.7rem}
+.bar-label{width:160px;font-size:.75rem;font-weight:600;text-align:right;flex-shrink:0}
+.bar-track{flex:1;height:26px;background:rgba(255,255,255,0.03);border-radius:6px;overflow:hidden;position:relative}
+.bar-fill{height:100%;border-radius:6px;display:flex;align-items:center;padding-left:.6rem;font-size:.65rem;font-weight:700;color:white;transition:width 1.2s cubic-bezier(.22,1,.36,1);width:0}
+
+/* Alert box */
+.alert{padding:1rem 1.25rem;border-radius:10px;font-size:.82rem;margin-top:1rem}
+.alert-red{background:rgba(239,68,68,0.07);border:1px solid rgba(239,68,68,0.18);color:var(--red)}
+.alert-green{background:rgba(16,185,129,0.07);border:1px solid rgba(16,185,129,0.18);color:var(--green)}
+.alert-blue{background:rgba(79,140,255,0.07);border:1px solid rgba(79,140,255,0.18);color:var(--blue)}
+.alert-gold{background:rgba(245,158,11,0.07);border:1px solid rgba(245,158,11,0.18);color:var(--gold)}
+.alert strong{font-weight:700}
+
+/* Compare cols */
+.compare{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+@media(max-width:768px){.compare{grid-template-columns:1fr}.bar-label{width:100px;font-size:.68rem}.nav-links{display:none}}
+
+/* Checklist */
+.checklist{list-style:none}
+.checklist li{display:flex;gap:.6rem;padding:.65rem 0;border-bottom:1px solid rgba(255,255,255,0.03);font-size:.82rem}
+.checklist li:last-child{border-bottom:none}
+.check-icon{width:22px;height:22px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:.7rem;flex-shrink:0;margin-top:1px}
+
+/* Course list compact */
+.course-list{columns:2;column-gap:1.5rem;font-size:.78rem}
+.course-list li{break-inside:avoid;padding:.3rem 0;border-bottom:1px solid rgba(255,255,255,0.02);list-style:none}
+@media(max-width:600px){.course-list{columns:1}}
+
+/* Footer */
+footer{border-top:1px solid var(--border);padding:2rem 1.5rem;text-align:center;color:var(--muted);font-size:.7rem}
+
+/* Scroll reveal */
+.reveal{opacity:0;transform:translateY(20px);transition:opacity .6s,transform .6s}
+.reveal.visible{opacity:1;transform:translateY(0)}
+
+/* Teacher badge */
+.teacher{display:inline-flex;align-items:center;gap:.3rem;font-size:.7rem;color:var(--text2);margin-top:.4rem}
+.teacher::before{content:'';width:4px;height:4px;border-radius:50%;background:var(--muted)}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-brand">509j CTE ALIGNMENT</div>
+  <div class="nav-links">
+    <a href="#overview">Overview</a>
+    <a href="#chs-programs">CHS Programs</a>
+    <a href="#cvhs-programs">CVHS Programs</a>
+    <a href="#cross-campus">Cross-Campus</a>
+    <a href="#college-now">College Now</a>
+    <a href="#gaps">Gaps & Moves</a>
+    <a href="#labor">Labor Market</a>
+    <a href="#alignment">Alignment</a>
+    <a href="#teamtime">Team Time</a>
+    <a href="#deliverables">Deliverables</a>
+    <a href="#teachers">Teachers & FTE</a>
+  </div>
+</nav>
+
+<div class="container">
+
+<!-- ═══ OVERVIEW ═══ -->
+<section id="overview">
+  <div class="reveal">
+    <div class="sec-label">District Snapshot</div>
+    <h1 class="sec-title">Corvallis 509j CTE: Where We Stand</h1>
+    <p class="sec-desc">A data-driven reference for aligning Career & Technical Education across Corvallis High School and Crescent Valley High School. Every claim below is sourced from school catalogs, district records, LBCC articulation data, and BLS/Oregon Employment Department statistics.</p>
+  </div>
+
+  <div class="stats reveal">
+    <div class="stat"><div class="stat-val">5</div><div class="stat-label">CHS CTE Programs</div></div>
+    <div class="stat"><div class="stat-val">5-6</div><div class="stat-label">CVHS CTE Programs</div></div>
+    <div class="stat"><div class="stat-val">0</div><div class="stat-label">Hard CTE Dual Credits</div></div>
+    <div class="stat"><div class="stat-val">20</div><div class="stat-label">CHS College Now</div></div>
+    <div class="stat"><div class="stat-val">20</div><div class="stat-label">CVHS College Now</div></div>
+    <div class="stat"><div class="stat-val">11</div><div class="stat-label">Shared Articulations</div></div>
+  </div>
+
+  <div class="alert alert-red reveal">
+    <strong>Critical Finding:</strong> Across 40 total College Now articulations at both campuses, <strong>zero</strong> are in Computer Science, Engineering, Manufacturing, Business, Advanced Health Sciences, Automotive, Welding, Culinary, or any hard CTE sector. Every articulation is academic transfer (English, Math, History, Spanish, Art, basic Health/PE).
+  </div>
+</section>
+
+<!-- ═══ CHS PROGRAMS ═══ -->
+<section id="chs-programs">
+  <div class="reveal">
+    <div class="sec-label">Corvallis High School</div>
+    <h2 class="sec-title">CHS CTE Programs & Courses</h2>
+    <p class="sec-desc">5 state-approved CTE Programs of Study (per 2026-27 Course Catalog, p.19). Students earning 2+ credits in a pathway are CTE Concentrators.</p>
+  </div>
+
+  <div class="tab-nav">
+    <button class="tab-btn active" data-tab="chs-cs">Computer Science</button>
+    <button class="tab-btn" data-tab="chs-mfg">Manufacturing</button>
+    <button class="tab-btn" data-tab="chs-auto">Automotive</button>
+    <button class="tab-btn" data-tab="chs-digital">Digital Arts</button>
+    <button class="tab-btn" data-tab="chs-ece">Early Childhood Ed</button>
+    <button class="tab-btn" data-tab="chs-other">Non-CTE Electives</button>
+  </div>
+
+  <!-- CS -->
+  <div class="tab-content active" id="tab-chs-cs">
+    <div class="card reveal">
+      <div style="display:flex;justify-content:space-between;align-items:start;flex-wrap:wrap;gap:.5rem">
+        <div>
+          <h3>Computer Science <span class="tag t-cte">CTE Pathway</span> <span class="tag t-ap">2 AP Courses</span></h3>
+          <div class="teacher">Randy Macdonald</div>
+        </div>
+        <span class="tag t-strong">Strength</span>
+      </div>
+      <div class="tbl-wrap" style="margin-top:1rem">
+        <table>
+          <thead><tr><th>Course</th><th>Credits</th><th>Prereq</th><th>Tags</th></tr></thead>
+          <tbody>
+            <tr><td>Intro to Computer Science 1</td><td>0.5</td><td>None</td><td><span class="tag t-cte">CTE</span></td></tr>
+            <tr><td>Intro to Computer Science 2</td><td>0.5</td><td>ICS1</td><td><span class="tag t-cte">CTE</span></td></tr>
+            <tr><td>AP Computer Science Principles</td><td>1.0</td><td>ICS2</td><td><span class="tag t-cte">CTE</span> <span class="tag t-ap">AP</span></td></tr>
+            <tr><td>AP Computer Science Programming</td><td>1.0</td><td>AP CSP</td><td><span class="tag t-cte">CTE</span> <span class="tag t-ap">AP</span></td></tr>
+            <tr><td>Advanced Topics in Computer Science</td><td>0.5</td><td>AP CSP/A</td><td><span class="tag t-cte">CTE</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="alert alert-green" style="margin-top:.75rem">
+        <strong>Strong 4-year sequence</strong> from block-based coding to Java to capstone project. CVHS students shuttle to CHS for these courses.
+      </div>
+      <div class="alert alert-red" style="margin-top:.5rem">
+        <strong>Gap:</strong> Zero College Now articulation with LBCC despite a 5-course deep pathway. Immediate articulation opportunity.
+      </div>
+    </div>
+  </div>
+
+  <!-- Manufacturing -->
+  <div class="tab-content" id="tab-chs-mfg">
+    <div class="card reveal">
+      <div style="display:flex;justify-content:space-between;align-items:start;flex-wrap:wrap;gap:.5rem">
+        <div>
+          <h3>Manufacturing <span class="tag t-cte">CTE Pathway</span></h3>
+          <div class="teacher">JJ Keim &mdash; Shop/Industrial Education</div>
+        </div>
+        <span class="tag t-strong">Strength</span>
+      </div>
+      <div class="tbl-wrap" style="margin-top:1rem">
+        <table>
+          <thead><tr><th>Course</th><th>Credits</th><th>Prereq</th><th>Notes</th></tr></thead>
+          <tbody>
+            <tr><td>Metals 1</td><td>0.5</td><td>None</td><td><span class="tag t-cte">CTE</span> Welding (MIG, Arc, Braze), machining, CAD</td></tr>
+            <tr><td>Metals 2A</td><td>0.5</td><td>Metals 1</td><td><span class="tag t-cte">CTE</span> Precision machining focus</td></tr>
+            <tr><td>Metals 2B</td><td>0.5</td><td>Metals 1</td><td><span class="tag t-cte">CTE</span> Mechanical design focus</td></tr>
+            <tr><td>Welding</td><td>0.5</td><td>Metals 1, Soph+</td><td><span class="tag t-cte">CTE</span> MIG, TIG, Arc, oxy-acetylene, brazing</td></tr>
+            <tr><td>Industrial Design 1</td><td>0.5</td><td>Metals 1 or Physics</td><td><span class="tag t-cte">CTE</span> SolidWorks, CNC, 3D printing</td></tr>
+            <tr><td>Industrial Design 2</td><td>0.5</td><td>ID1</td><td><span class="tag t-cte">CTE</span></td></tr>
+            <tr><td>Capstone: Vehicular Design</td><td>1.0</td><td>Metals 1, 2B, ID1, Jr/Sr</td><td><span class="tag t-cte">CTE</span> Design/build/test vehicle</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="alert alert-red" style="margin-top:.75rem">
+        <strong>Gap:</strong> No LBCC articulation despite strong alignment with LBCC's Welding/Fabrication, Machine Tool Technology, and CADD programs.
+      </div>
+      <p style="font-size:.78rem;color:var(--text2);margin-top:.5rem"><strong>Note:</strong> The district CTE website labels this pathway "Construction" with different course names (Construction, Site Prep, Construction Estimating). The 2026-27 catalog calls it "Manufacturing." This discrepancy needs admin clarification.</p>
+    </div>
+  </div>
+
+  <!-- Automotive -->
+  <div class="tab-content" id="tab-chs-auto">
+    <div class="card reveal">
+      <div style="display:flex;justify-content:space-between;align-items:start;flex-wrap:wrap;gap:.5rem">
+        <div>
+          <h3>Automotive <span class="tag t-cte">CTE Pathway</span></h3>
+          <div class="teacher">JJ Keim</div>
+        </div>
+        <span class="tag t-warn">Short Sequence</span>
+      </div>
+      <div class="tbl-wrap" style="margin-top:1rem">
+        <table>
+          <thead><tr><th>Course</th><th>Credits</th><th>Prereq</th></tr></thead>
+          <tbody>
+            <tr><td>Automotive 1</td><td>0.5</td><td>Sophomore+</td></tr>
+            <tr><td>Automotive 2</td><td>0.5</td><td>Auto 1</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="alert alert-gold" style="margin-top:.75rem">
+        <strong>Concern:</strong> Only 2-course sequence (1.0 total credits). LBCC has a full Automotive Technology AAS. No College Now articulation exists. Also offered at CVHS under Pre-Engineering umbrella &mdash; potential redundancy to examine.
+      </div>
+    </div>
+  </div>
+
+  <!-- Digital Arts -->
+  <div class="tab-content" id="tab-chs-digital">
+    <div class="card reveal">
+      <div style="display:flex;justify-content:space-between;align-items:start;flex-wrap:wrap;gap:.5rem">
+        <div>
+          <h3>Digital Arts <span class="tag t-cte">CTE Pathway</span></h3>
+          <div class="teacher">Jayce Giddens &mdash; Photography, Graphics, Digital Media, Business & Design</div>
+        </div>
+        <span class="tag t-strong">Strength</span>
+      </div>
+      <div class="tbl-wrap" style="margin-top:1rem">
+        <table>
+          <thead><tr><th>Course</th><th>Credits</th><th>CTE</th></tr></thead>
+          <tbody>
+            <tr><td>Digital Media 1, 2 (aka Beginning Digital Arts & Filmmaking)</td><td>0.5</td><td><span class="tag t-cte">CTE</span></td></tr>
+            <tr><td>Advanced Digital Arts (Business & Design)</td><td>0.5 (repeatable)</td><td><span class="tag t-cte">CTE</span></td></tr>
+            <tr><td>Beginning Graphic Design</td><td>0.5</td><td><span class="tag t-cte">CTE</span></td></tr>
+            <tr><td>Graphic Design 2, 3, 4</td><td>0.5 (repeatable)</td><td><span class="tag t-cte">CTE</span></td></tr>
+            <tr><td>Photography 1</td><td>0.5</td><td><span class="tag t-cte">CTE</span></td></tr>
+            <tr><td>Photography 2 & 3</td><td>0.5 (repeatable)</td><td><span class="tag t-cte">CTE</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="alert alert-green" style="margin-top:.75rem">
+        <strong>College Now link:</strong> "Beginning Photo + Beginning Graphic Design" articulates to LBCC ART 120 (Foundations in Digital Imaging Processes, 4cr) &mdash; the only CTE-adjacent dual credit at CHS.
+      </div>
+    </div>
+  </div>
+
+  <!-- ECE -->
+  <div class="tab-content" id="tab-chs-ece">
+    <div class="card reveal">
+      <div style="display:flex;justify-content:space-between;align-items:start;flex-wrap:wrap;gap:.5rem">
+        <div>
+          <h3>Early Childhood Education <span class="tag t-cte">CTE Pathway</span></h3>
+          <div class="teacher">Alyssa Reynolds &mdash; Family & Consumer Studies/Children's School</div>
+        </div>
+        <span class="tag t-strong">Strength</span>
+      </div>
+      <div class="tbl-wrap" style="margin-top:1rem">
+        <table>
+          <thead><tr><th>Course</th><th>Credits</th><th>Notes</th></tr></thead>
+          <tbody>
+            <tr><td>Child Development 1</td><td>1.0</td><td><span class="tag t-cte">CTE</span> Run CHS preschool; lesson planning</td></tr>
+            <tr><td>Child Development 2</td><td>1.0</td><td><span class="tag t-cte">CTE</span> Lead teacher role</td></tr>
+            <tr><td>Child Development 3</td><td>1.0</td><td><span class="tag t-cte">CTE</span> Oversee preschool + elementary internship</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="alert alert-green" style="margin-top:.75rem">
+        <strong>College Now link:</strong> Child Development articulates to LBCC ED 101 (Observation & Guidance, 4cr). This is a CTE-adjacent articulation.
+      </div>
+    </div>
+  </div>
+
+  <!-- Non-CTE -->
+  <div class="tab-content" id="tab-chs-other">
+    <div class="card reveal">
+      <h3>CHS Non-CTE Applied Electives</h3>
+      <p style="margin-bottom:.75rem">These courses exist in the Industrial/Applied Technology and Family & Consumer Sciences departments but are <strong>not CTE-designated</strong> in the catalog.</p>
+      <div class="compare">
+        <div>
+          <h4 style="font-size:.8rem;font-weight:700;margin-bottom:.5rem">Industrial & Applied Tech</h4>
+          <ul class="course-list">
+            <li>Architecture (0.5cr) &mdash; Not CTE</li>
+            <li>Woods 1 (0.5cr) &mdash; Not CTE</li>
+            <li>Woods 2 (0.5cr) &mdash; Not CTE</li>
+            <li>Computer Keyboarding (0.5cr) &mdash; Not CTE</li>
+          </ul>
+        </div>
+        <div>
+          <h4 style="font-size:.8rem;font-weight:700;margin-bottom:.5rem">Family & Consumer Sciences</h4>
+          <ul class="course-list">
+            <li>Bake(d) Good(s) (0.5cr) &mdash; Not CTE</li>
+            <li>Foods & Nutrition (0.5cr) &mdash; Not CTE</li>
+            <li>International Foods 1 (0.5cr) &mdash; Not CTE</li>
+            <li>International Foods 2 (0.5cr) &mdash; Not CTE</li>
+            <li>Senior Foods (0.5cr) &mdash; Not CTE</li>
+          </ul>
+          <p style="font-size:.72rem;color:var(--text2);margin-top:.5rem"><strong>Note:</strong> Culinary Arts 1 &amp; 2 are CTE courses taught at CVHS, accessible to CHS students.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ CVHS PROGRAMS ═══ -->
+<section id="cvhs-programs">
+  <div class="reveal">
+    <div class="sec-label">Crescent Valley High School</div>
+    <h2 class="sec-title">CVHS CTE Programs & Courses</h2>
+    <p class="sec-desc">CVHS course catalog page lists 5 programs; district CTE page lists 6 pathways (adding Health Sciences, Film & Video, Early Childhood Ed; omitting Computer Info Tech Mgmt and Digital Imaging). This discrepancy itself needs resolution.</p>
+  </div>
+
+  <div class="tab-nav">
+    <button class="tab-btn active" data-tab="cv-eng">Pre-Engineering</button>
+    <button class="tab-btn" data-tab="cv-culinary">Culinary Arts</button>
+    <button class="tab-btn" data-tab="cv-health">Health Sciences</button>
+    <button class="tab-btn" data-tab="cv-arts">Design & Applied Arts</button>
+    <button class="tab-btn" data-tab="cv-film">Film & Video</button>
+    <button class="tab-btn" data-tab="cv-ece">Early Childhood Ed</button>
+  </div>
+
+  <!-- Pre-Engineering -->
+  <div class="tab-content active" id="tab-cv-eng">
+    <div class="card reveal">
+      <div style="display:flex;justify-content:space-between;align-items:start;flex-wrap:wrap;gap:.5rem">
+        <div>
+          <h3>Pre-Engineering <span class="tag t-cte">CTE Pathway</span></h3>
+          <div class="teacher">Adam Kirsch (Science/Engineering) &bull; Andy McAteer (Industrial Arts)</div>
+        </div>
+        <span class="tag t-strong">Strength</span>
+      </div>
+      <div class="tbl-wrap" style="margin-top:1rem">
+        <table>
+          <thead><tr><th>Course</th><th>Credits</th><th>Notes</th></tr></thead>
+          <tbody>
+            <tr><td>IDEA &mdash; Intro to Design with Engineering and Art</td><td>1.0</td><td><span class="tag t-cte">CTE</span> +0.5 Applied Art at completion</td></tr>
+            <tr><td>STEAM &mdash; Sci & Tech using Electronics</td><td>Elective</td><td><span class="tag t-cte">CTE</span></td></tr>
+            <tr><td>DREAM &mdash; Designing, Researching & Engineering Articles for Market</td><td>Elective</td><td><span class="tag t-cte">CTE</span></td></tr>
+            <tr><td>Architecture & Micro-Construction</td><td>1.0</td><td><span class="tag t-cte">CTE</span> +0.5 science credit</td></tr>
+            <tr><td>PST (listed on district CTE page)</td><td>—</td><td><span class="tag t-cte">CTE</span></td></tr>
+            <tr><td>Automotive 1</td><td>0.5</td><td><span class="tag t-cte">CTE</span></td></tr>
+            <tr><td>Automotive 2</td><td>0.5</td><td><span class="tag t-cte">CTE</span></td></tr>
+            <tr><td>Metals 1 or 2</td><td>1.0</td><td><span class="tag t-cte">CTE</span></td></tr>
+            <tr><td>Woodworking 1, 2, 3, or 4</td><td>1.0</td><td><span class="tag t-cte">CTE</span></td></tr>
+            <tr><td>Carpentry 1</td><td>1.0</td><td>Listed on forecasting sheet</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="alert alert-blue" style="margin-top:.75rem">
+        <strong>Note:</strong> IDEA/STEAM/DREAM are CVHS-unique engineering courses with no CHS equivalent. Automotive 1-2 and Metals overlap with CHS Manufacturing pathway &mdash; key alignment discussion point.
+      </div>
+      <div class="alert alert-red" style="margin-top:.5rem">
+        <strong>Gap:</strong> No LBCC articulation for any Pre-Engineering course despite alignment with LBCC's Mechatronics, CADD, and Welding programs.
+      </div>
+    </div>
+  </div>
+
+  <!-- Culinary -->
+  <div class="tab-content" id="tab-cv-culinary">
+    <div class="card reveal">
+      <div style="display:flex;justify-content:space-between;align-items:start;flex-wrap:wrap;gap:.5rem">
+        <div>
+          <h3>Culinary Arts <span class="tag t-cte">CTE Pathway</span></h3>
+          <div class="teacher">Emily Sass &mdash; Culinary Teacher</div>
+        </div>
+        <span class="tag t-warn">CVHS Only</span>
+      </div>
+      <div class="tbl-wrap" style="margin-top:1rem">
+        <table>
+          <thead><tr><th>Course</th><th>Credits</th><th>Notes</th></tr></thead>
+          <tbody>
+            <tr><td>Foods for Life</td><td>0.5</td><td><span class="tag t-cte">CTE</span></td></tr>
+            <tr><td>Baking and Pastries</td><td>0.5</td><td><span class="tag t-cte">CTE</span></td></tr>
+            <tr><td>Culinary Arts 1</td><td>1.0</td><td><span class="tag t-cte">CTE</span> ProStart curriculum (NRA)</td></tr>
+            <tr><td>Culinary Arts 2</td><td>1.0</td><td><span class="tag t-cte">CTE</span> Business plan, menu development</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="alert alert-gold" style="margin-top:.75rem">
+        <strong>Cross-campus:</strong> CHS students can access Culinary Arts 1 &amp; 2 at CVHS. CHS offers non-CTE food courses (Foods &amp; Nutrition, International Foods). LBCC has a Culinary Arts program but no articulation exists.
+      </div>
+    </div>
+  </div>
+
+  <!-- Health Sciences -->
+  <div class="tab-content" id="tab-cv-health">
+    <div class="card reveal">
+      <div style="display:flex;justify-content:space-between;align-items:start;flex-wrap:wrap;gap:.5rem">
+        <div>
+          <h3>Health Sciences <span class="tag t-cte">CTE Pathway</span></h3>
+          <div class="teacher">Catherine Corkery &bull; Aubrey Mendonca &bull; Kristina Stone</div>
+        </div>
+        <span class="tag t-warn">CVHS Only</span>
+      </div>
+      <div class="tbl-wrap" style="margin-top:1rem">
+        <table>
+          <thead><tr><th>Course</th><th>Credits</th><th>Notes</th></tr></thead>
+          <tbody>
+            <tr><td>Intro to Health/Medical Careers</td><td>0.5</td><td><span class="tag t-cte">CTE</span></td></tr>
+            <tr><td>Sports and Health</td><td>0.5</td><td><span class="tag t-cte">CTE</span></td></tr>
+            <tr><td>Anatomy and Physiology</td><td>1.0</td><td><span class="tag t-cte">CTE</span> Listed under Science</td></tr>
+            <tr><td>Health Occupations</td><td>1.0</td><td><span class="tag t-cte">CTE</span> CPR/First Aid cert, clinical rotations semester 2</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="alert alert-red" style="margin-top:.75rem">
+        <strong>Critical Gap:</strong> Healthcare is the #1 growth sector locally (16% of employment, +40,400 jobs statewide by 2034). CVHS has courses but <strong>no CNA certification track</strong> (Albany has this). Only College Now link is basic HE 110/PE 231 (First Aid/Fitness). LBCC offers Nursing, CNA, Medical Assistant, Dental Assistant &mdash; none articulated.
+      </div>
+    </div>
+  </div>
+
+  <!-- Arts -->
+  <div class="tab-content" id="tab-cv-arts">
+    <div class="card reveal">
+      <div style="display:flex;justify-content:space-between;align-items:start;flex-wrap:wrap;gap:.5rem">
+        <div>
+          <h3>Design and Applied Arts <span class="tag t-cte">CTE Pathway</span></h3>
+          <div class="teacher">Keith Moses (Art) &bull; Stephanie Reinwald (Applied Tech & Art)</div>
+        </div>
+        <span class="tag t-strong">Strength</span>
+      </div>
+      <div class="tbl-wrap" style="margin-top:1rem">
+        <table>
+          <thead><tr><th>Course</th><th>Credits</th><th>Notes</th></tr></thead>
+          <tbody>
+            <tr><td>Ceramics: BEG, INT, ADV</td><td>1.0</td><td><span class="tag t-cte">CTE</span></td></tr>
+            <tr><td>Glass Arts: BEG, INT, ADV</td><td>0.5</td><td><span class="tag t-cte">CTE</span></td></tr>
+            <tr><td>Jewelry: BEG, INT, ADV, PROF</td><td>0.5</td><td><span class="tag t-cte">CTE</span></td></tr>
+            <tr><td>AP Art 2D or 3D</td><td>1.0</td><td><span class="tag t-cte">CTE</span> <span class="tag t-ap">AP</span></td></tr>
+            <tr><td>Independent Study Art 3D</td><td>0.5-1.0</td><td><span class="tag t-cte">CTE</span> <span class="tag t-cn">College Now</span></td></tr>
+            <tr><td>Cadet Teaching in Art</td><td>0.5-1.0</td><td><span class="tag t-cte">CTE</span></td></tr>
+            <tr><td>Internship in Art</td><td>0.5-1.0</td><td><span class="tag t-cte">CTE</span></td></tr>
+            <tr><td>Studio Technician</td><td>0.5</td><td><span class="tag t-cte">CTE</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="alert alert-green" style="margin-top:.75rem">
+        <strong>College Now:</strong> Intermediate Ceramics &rarr; LBCC ART 154 (Ceramics I, 4cr). Advanced Ceramics &rarr; LBCC ART 254 (Ceramics II, 4cr). Independent Study Art 3D is also CN eligible.
+      </div>
+    </div>
+  </div>
+
+  <!-- Film -->
+  <div class="tab-content" id="tab-cv-film">
+    <div class="card reveal">
+      <div style="display:flex;justify-content:space-between;align-items:start;flex-wrap:wrap;gap:.5rem">
+        <div>
+          <h3>Film & Video / Digital Imaging <span class="tag t-cte">CTE Pathway</span></h3>
+          <div class="teacher">Kevin Freedman (Digital Arts)</div>
+        </div>
+        <span class="tag t-warn">CVHS Only</span>
+      </div>
+      <p style="font-size:.78rem;color:var(--text2);margin:.5rem 0">District CTE page lists: Film History & Genres, Great Directors, 21st Century Filmmaking, Advanced Filmmaking. CVHS catalog page uses different names. Course-level naming needs alignment verification.</p>
+      <div class="tbl-wrap" style="margin-top:.5rem">
+        <table>
+          <thead><tr><th>Course</th><th>Credits</th><th>Notes</th></tr></thead>
+          <tbody>
+            <tr><td>Filmmaking 1</td><td>1.0</td><td><span class="tag t-cte">CTE</span></td></tr>
+            <tr><td>Advanced Filmmaking 2, 3, 4</td><td>1.0 each</td><td><span class="tag t-cte">CTE</span></td></tr>
+            <tr><td>Film Studies 1: Film History & Genres</td><td>0.5</td><td><span class="tag t-cte">CTE</span></td></tr>
+            <tr><td>Film Studies 2: Great Directors</td><td>0.5</td><td><span class="tag t-cte">CTE</span></td></tr>
+            <tr><td>Digital Photography 1, 2</td><td>0.5</td><td><span class="tag t-cte">CTE</span></td></tr>
+            <tr><td>Digital Design 1, 2</td><td>0.5</td><td><span class="tag t-cte">CTE</span></td></tr>
+            <tr><td>CVTV Broadcasting</td><td>1.0</td><td>Listed as Broadcast Journalism on some sources</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="alert alert-gold" style="margin-top:.75rem">
+        <strong>Cross-campus note:</strong> CHS has Digital Arts (Digital Media, Photography, Graphic Design). CVHS has Film & Video. Potential complementary specialization or overlap to examine.
+      </div>
+    </div>
+  </div>
+
+  <!-- ECE -->
+  <div class="tab-content" id="tab-cv-ece">
+    <div class="card reveal">
+      <h3>Early Childhood Education <span class="tag t-cte">CTE Pathway</span></h3>
+      <div class="teacher">Julie Serna &mdash; Child Development / Family & Consumer Studies</div>
+      <div class="tbl-wrap" style="margin-top:1rem">
+        <table>
+          <thead><tr><th>Course</th><th>Credits</th></tr></thead>
+          <tbody>
+            <tr><td>Child Development 1 or 2</td><td>1.0</td></tr>
+            <tr><td>Cadet Teaching &mdash; Child Development</td><td>1.0</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="alert alert-gold" style="margin-top:.75rem">
+        <strong>Cross-campus overlap:</strong> Both CHS and CVHS have Child Development / ECE. CHS has a 3-course sequence (Child Dev 1-3) with LBCC ED 101 articulation. CVHS has Child Dev + Cadet Teaching. Key alignment discussion: should one campus specialize?
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ CROSS-CAMPUS ═══ -->
+<section id="cross-campus">
+  <div class="reveal">
+    <div class="sec-label">Side-by-Side</div>
+    <h2 class="sec-title">Cross-Campus Comparison</h2>
+    <p class="sec-desc">Where do CHS and CVHS overlap, complement, or create gaps? This is the core data for alignment discussions.</p>
+  </div>
+
+  <div class="tbl-wrap reveal">
+    <table>
+      <thead>
+        <tr><th>CTE Area</th><th>CHS</th><th>CVHS</th><th>Status</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>Computer Science</strong></td><td>5-course pathway (Macdonald)</td><td>Students shuttle to CHS</td><td><span class="tag t-strong">CHS Hub</span></td></tr>
+        <tr><td><strong>Manufacturing / Metals / Welding</strong></td><td>7-course pathway (Keim)</td><td>Metals + Woodworking within Pre-Eng (McAteer)</td><td><span class="tag t-warn">Overlap</span></td></tr>
+        <tr><td><strong>Automotive</strong></td><td>2 courses (Keim)</td><td>2 courses within Pre-Eng (McAteer)</td><td><span class="tag t-gap">Redundancy?</span></td></tr>
+        <tr><td><strong>Pre-Engineering (IDEA/STEAM/DREAM)</strong></td><td>None</td><td>Unique to CVHS (Kirsch)</td><td><span class="tag t-strong">CVHS Unique</span></td></tr>
+        <tr><td><strong>Digital Arts / Graphic Design</strong></td><td>6-course pathway (Giddens)</td><td>Digital Design 1-2, Photography 1-2</td><td><span class="tag t-warn">Overlap</span></td></tr>
+        <tr><td><strong>Film & Video</strong></td><td>None (Digital Media 1-2 only)</td><td>Full Film pathway + CVTV (Freedman)</td><td><span class="tag t-strong">CVHS Hub</span></td></tr>
+        <tr><td><strong>Culinary Arts</strong></td><td>Non-CTE foods only</td><td>Full CTE pathway (Sass)</td><td><span class="tag t-strong">CVHS Hub</span></td></tr>
+        <tr><td><strong>Health Sciences</strong></td><td>None</td><td>4-course CTE pathway</td><td><span class="tag t-strong">CVHS Hub</span></td></tr>
+        <tr><td><strong>Early Childhood Ed</strong></td><td>Child Dev 1-3 (Reynolds)</td><td>Child Dev + Cadet Teaching (Serna)</td><td><span class="tag t-warn">Both</span></td></tr>
+        <tr><td><strong>Design & Applied Arts (Ceramics, Glass, Jewelry)</strong></td><td>None</td><td>Full CTE pathway (Moses, Reinwald)</td><td><span class="tag t-strong">CVHS Unique</span></td></tr>
+        <tr><td><strong>Woods / Carpentry</strong></td><td>Woods 1-2 (Not CTE)</td><td>Woodworking 1-4, Carpentry 1 (CTE)</td><td><span class="tag t-warn">Misaligned</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="alert alert-blue reveal" style="margin-top:1rem">
+    <strong>Key alignment questions:</strong> (1) Should Automotive be consolidated to one campus? (2) How do CHS Manufacturing and CVHS Pre-Engineering Metals/Woodworking align &mdash; are students learning the same skills under different names? (3) Should Early Childhood Ed specialize at one campus with a deeper sequence? (4) Why are CHS Woods courses not CTE-designated when CVHS Woodworking is?
+  </div>
+</section>
+
+<!-- ═══ COLLEGE NOW ═══ -->
+<section id="college-now">
+  <div class="reveal">
+    <div class="sec-label">Dual Credit Data</div>
+    <h2 class="sec-title">College Now Articulations (LBCC)</h2>
+    <p class="sec-desc">Exact data from district CSV files. CHS data dated 3/2026. CVHS data dated 11/2025.</p>
+  </div>
+
+  <div class="tab-nav">
+    <button class="tab-btn active" data-tab="cn-chs">CHS (20 articulations)</button>
+    <button class="tab-btn" data-tab="cn-cvhs">CVHS (20 articulations)</button>
+    <button class="tab-btn" data-tab="cn-shared">Shared vs Unique</button>
+  </div>
+
+  <div class="tab-content active" id="tab-cn-chs">
+    <div class="tbl-wrap reveal">
+      <table>
+        <thead><tr><th>HS Class</th><th>LBCC Course</th><th>Title</th><th>CR</th><th>Teacher</th><th>Type</th></tr></thead>
+        <tbody>
+          <tr><td>Beg Photo + Beg Graphic Design</td><td>ART 120</td><td>Foundations in Digital Imaging</td><td>4</td><td>Giddens, J</td><td><span class="tag t-cte">CTE-adj</span></td></tr>
+          <tr><td>Child Development</td><td>ED 101</td><td>Observation & Guidance</td><td>4</td><td>Reynold, A</td><td><span class="tag t-cte">CTE-adj</span></td></tr>
+          <tr><td>Honors American Literature</td><td>ENG 104Z</td><td>Introduction to Fiction</td><td>4</td><td>Griffin, L</td><td><span class="tag t-core">Core</span></td></tr>
+          <tr><td>Honors American Literature</td><td>ENG 106Z</td><td>Introduction to Poetry</td><td>4</td><td>Griffin, L</td><td><span class="tag t-core">Core</span></td></tr>
+          <tr><td>AP History</td><td>HST 201</td><td>U.S. History: Origins to 1820</td><td>4</td><td>Theurer, S</td><td><span class="tag t-core">Core</span></td></tr>
+          <tr><td>AP History</td><td>HST 202</td><td>U.S. History: 1820 to 1920</td><td>4</td><td>Theurer, S</td><td><span class="tag t-core">Core</span></td></tr>
+          <tr><td>AP History</td><td>HST 203</td><td>U.S. History: 1920 to Present</td><td>4</td><td>Theurer, S</td><td><span class="tag t-core">Core</span></td></tr>
+          <tr><td>Financial Algebra</td><td>MTH 105Z</td><td>Math in Society</td><td>4</td><td>Hardy, K</td><td><span class="tag t-core">Core</span></td></tr>
+          <tr><td>Financial Algebra</td><td>MTH 105Z</td><td>Math in Society</td><td>4</td><td>Zachariah, A</td><td><span class="tag t-core">Core</span></td></tr>
+          <tr><td>Pre Calculus 1 / Trig</td><td>MTH 111Z</td><td>PreCalculus I: Functions</td><td>4</td><td>Zachariah, A</td><td><span class="tag t-core">Core</span></td></tr>
+          <tr><td>Honors Alg 2 / Pre Calc 1</td><td>MTH 111Z</td><td>PreCalculus I: Functions</td><td>4</td><td>Hintzman, A</td><td><span class="tag t-core">Core</span></td></tr>
+          <tr><td>Honors Pre Calculus 2</td><td>MTH 112Z</td><td>PreCalculus II: Trig</td><td>4</td><td>Kollath, J</td><td><span class="tag t-core">Core</span></td></tr>
+          <tr><td>Differential Calculus</td><td>MTH 251Z</td><td>Differential Calculus</td><td>4</td><td>Gartner, N</td><td><span class="tag t-core">Core</span></td></tr>
+          <tr><td>AP Statistics</td><td>STAT 243Z</td><td>Elementary Statistics I</td><td>4</td><td>Kollath, J</td><td><span class="tag t-core">Core</span></td></tr>
+          <tr><td>AP US Government</td><td>PS 201</td><td>Intro to Amer. Politics & Gov</td><td>3</td><td>Goranson, N</td><td><span class="tag t-core">Core</span></td></tr>
+          <tr><td>Spanish 4</td><td>SPN 103</td><td>First Year Spanish III</td><td>4</td><td>Kussalanant, G</td><td><span class="tag t-core">Core</span></td></tr>
+          <tr><td>AP Spanish Language / DI</td><td>SPN 201</td><td>Second Year Spanish I</td><td>4</td><td>Kussalanant, G</td><td><span class="tag t-core">Core</span></td></tr>
+          <tr><td>DI Curso Culminate</td><td>SPN 203</td><td>Second Year Spanish III</td><td>4</td><td>Filloy-Sharp, A</td><td><span class="tag t-core">Core</span></td></tr>
+          <tr><td>AP English Lang & Comp</td><td>WR 121Z</td><td>Composition I</td><td>4</td><td>Egan, L</td><td><span class="tag t-core">Core</span></td></tr>
+          <tr><td>AP English Lang & Comp</td><td>WR 121Z</td><td>Composition I</td><td>4</td><td>King, M</td><td><span class="tag t-core">Core</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p style="font-size:.72rem;color:var(--text2);margin-top:.5rem"><strong>CTE-adjacent articulations:</strong> ART 120 (Digital Imaging via Giddens) and ED 101 (Child Dev via Reynolds). The remaining 18 are purely academic.</p>
+  </div>
+
+  <div class="tab-content" id="tab-cn-cvhs">
+    <div class="tbl-wrap reveal">
+      <table>
+        <thead><tr><th>HS Class</th><th>LBCC Course</th><th>Title</th><th>CR</th><th>Teacher</th><th>Type</th></tr></thead>
+        <tbody>
+          <tr><td>Intermediate Ceramics</td><td>ART 154</td><td>Ceramics I</td><td>4</td><td>Moses, K</td><td><span class="tag t-cte">CTE-adj</span></td></tr>
+          <tr><td>Advanced Ceramics</td><td>ART 254</td><td>Ceramics II</td><td>4</td><td>Moses, K</td><td><span class="tag t-cte">CTE-adj</span></td></tr>
+          <tr><td>Physics</td><td>GS104</td><td>Physical Science: Principles of Physics</td><td>4</td><td>Bregar, D</td><td><span class="tag t-core">Core</span></td></tr>
+          <tr><td>Honors Senior Lit & Comp</td><td>WR 121Z</td><td>Composition I</td><td>4</td><td>Jordan, S</td><td><span class="tag t-core">Core</span></td></tr>
+          <tr><td>AP Language</td><td>WR 121Z</td><td>Composition I</td><td>4</td><td>Wight, L</td><td><span class="tag t-core">Core</span></td></tr>
+          <tr><td>AP Government and Politics</td><td>PS 201</td><td>Intro to Amer. Politics & Gov</td><td>3</td><td>Perley, K</td><td><span class="tag t-core">Core</span></td></tr>
+          <tr><td>AP US History</td><td>HST 201</td><td>Colonial and Revolution</td><td>4</td><td>Perley, K</td><td><span class="tag t-core">Core</span></td></tr>
+          <tr><td>AP US History</td><td>HST 202</td><td>Civil War and Reconstruction</td><td>4</td><td>Perley, K</td><td><span class="tag t-core">Core</span></td></tr>
+          <tr><td>AP US History</td><td>HST 203</td><td>Rise to World Power</td><td>4</td><td>Perley, K</td><td><span class="tag t-core">Core</span></td></tr>
+          <tr><td>Sports and Health</td><td>HE 110</td><td>First Aid/CPR</td><td>1</td><td>Corkery, C</td><td><span class="tag t-health">Health</span></td></tr>
+          <tr><td>(paired)</td><td>PE 231</td><td>Lifetime Health & Fitness</td><td>3</td><td>&mdash;</td><td><span class="tag t-health">Health</span></td></tr>
+          <tr><td>Health 2</td><td>HE 110</td><td>First Aid/CPR</td><td>1</td><td>Stone, K</td><td><span class="tag t-health">Health</span></td></tr>
+          <tr><td>(paired)</td><td>PE 231</td><td>Lifetime Health & Fitness</td><td>3</td><td>&mdash;</td><td><span class="tag t-health">Health</span></td></tr>
+          <tr><td>Math in Society</td><td>MTH 105Z</td><td>Math in Society</td><td>4</td><td>Howe, R</td><td><span class="tag t-core">Core</span></td></tr>
+          <tr><td>Precalculus (Sem 1)</td><td>MTH 111Z</td><td>Precalculus I: Functions</td><td>4</td><td>Mock, A</td><td><span class="tag t-core">Core</span></td></tr>
+          <tr><td>Precalculus (Sem 2)</td><td>MTH 112Z</td><td>Precalculus II: Trig</td><td>4</td><td>Mock, A</td><td><span class="tag t-core">Core</span></td></tr>
+          <tr><td>Differential Calculus</td><td>MTH 251Z</td><td>Differential Calculus</td><td>4</td><td>Zimmers, H</td><td><span class="tag t-core">Core</span></td></tr>
+          <tr><td>Spanish 3</td><td>SPN 102</td><td>First Year Spanish II</td><td>4</td><td>Dickerson, S</td><td><span class="tag t-core">Core</span></td></tr>
+          <tr><td>Spanish 4</td><td>SPN 103</td><td>First Year Spanish III</td><td>4</td><td>Dickerson, S</td><td><span class="tag t-core">Core</span></td></tr>
+          <tr><td>Spanish 5/AP Spanish</td><td>SPN 201</td><td>Second Year Spanish I</td><td>4</td><td>Dickerson, S</td><td><span class="tag t-core">Core</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p style="font-size:.72rem;color:var(--text2);margin-top:.5rem"><strong>CTE-adjacent:</strong> ART 154/254 (Ceramics via Moses). Health-adjacent: HE 110/PE 231 (First Aid via Corkery/Stone). The remaining 14 are academic.</p>
+  </div>
+
+  <div class="tab-content" id="tab-cn-shared">
+    <div class="compare reveal">
+      <div class="card card-sm">
+        <h3 style="margin-bottom:.75rem">Shared (11 LBCC courses at both)</h3>
+        <ul class="course-list" style="columns:1">
+          <li><span class="tag t-shared">Shared</span> WR 121Z &mdash; Composition I</li>
+          <li><span class="tag t-shared">Shared</span> HST 201 &mdash; U.S. History I</li>
+          <li><span class="tag t-shared">Shared</span> HST 202 &mdash; U.S. History II</li>
+          <li><span class="tag t-shared">Shared</span> HST 203 &mdash; U.S. History III</li>
+          <li><span class="tag t-shared">Shared</span> MTH 105Z &mdash; Math in Society</li>
+          <li><span class="tag t-shared">Shared</span> MTH 111Z &mdash; PreCalc I</li>
+          <li><span class="tag t-shared">Shared</span> MTH 112Z &mdash; PreCalc II</li>
+          <li><span class="tag t-shared">Shared</span> MTH 251Z &mdash; Differential Calculus</li>
+          <li><span class="tag t-shared">Shared</span> PS 201 &mdash; American Politics</li>
+          <li><span class="tag t-shared">Shared</span> SPN 103 &mdash; First Year Spanish III</li>
+          <li><span class="tag t-shared">Shared</span> SPN 201 &mdash; Second Year Spanish I</li>
+        </ul>
+      </div>
+      <div>
+        <div class="card card-sm" style="margin-bottom:1rem">
+          <h3 style="margin-bottom:.5rem">CHS Only (6 courses)</h3>
+          <ul class="course-list" style="columns:1">
+            <li><span class="tag t-cte">CTE-adj</span> ART 120 &mdash; Digital Imaging</li>
+            <li><span class="tag t-cte">CTE-adj</span> ED 101 &mdash; Observation & Guidance</li>
+            <li>ENG 104Z &mdash; Intro to Fiction</li>
+            <li>ENG 106Z &mdash; Intro to Poetry</li>
+            <li>STAT 243Z &mdash; Elementary Statistics I</li>
+            <li>SPN 203 &mdash; Second Year Spanish III</li>
+          </ul>
+        </div>
+        <div class="card card-sm">
+          <h3 style="margin-bottom:.5rem">CVHS Only (6 courses)</h3>
+          <ul class="course-list" style="columns:1">
+            <li><span class="tag t-cte">CTE-adj</span> ART 154 &mdash; Ceramics I</li>
+            <li><span class="tag t-cte">CTE-adj</span> ART 254 &mdash; Ceramics II</li>
+            <li>GS104 &mdash; Physics</li>
+            <li><span class="tag t-health">Health</span> HE 110 &mdash; First Aid/CPR</li>
+            <li><span class="tag t-health">Health</span> PE 231 &mdash; Lifetime Health & Fitness</li>
+            <li>SPN 102 &mdash; First Year Spanish II</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ GAPS & MOVES ═══ -->
+<section id="gaps">
+  <div class="reveal">
+    <div class="sec-label">Strategic Analysis</div>
+    <h2 class="sec-title">Where We're Strong, Where We're Short, Where to Move</h2>
+  </div>
+
+  <div class="grid grid-3 reveal">
+    <div class="card" style="border-top:3px solid var(--green)">
+      <h3 style="color:var(--green)">Strengths</h3>
+      <ul style="font-size:.8rem;color:var(--text2);padding-left:1.1rem;margin-top:.5rem">
+        <li style="margin-bottom:.4rem"><strong>Computer Science (CHS)</strong> &mdash; Deep 4-year sequence with 2 AP courses. Already a de facto hub.</li>
+        <li style="margin-bottom:.4rem"><strong>Pre-Engineering (CVHS)</strong> &mdash; Unique IDEA/STEAM/DREAM courses have no CHS equivalent. Clear CVHS strength.</li>
+        <li style="margin-bottom:.4rem"><strong>Manufacturing (CHS)</strong> &mdash; 7-course pathway through capstone. Strong hands-on infrastructure (bond-funded).</li>
+        <li style="margin-bottom:.4rem"><strong>Digital Arts (CHS) + Film (CVHS)</strong> &mdash; Complementary specializations across campuses.</li>
+        <li style="margin-bottom:.4rem"><strong>Design & Applied Arts (CVHS)</strong> &mdash; Unique ceramics/glass/jewelry CTE with LBCC articulation.</li>
+      </ul>
+    </div>
+
+    <div class="card" style="border-top:3px solid var(--red)">
+      <h3 style="color:var(--red)">Shortfalls</h3>
+      <ul style="font-size:.8rem;color:var(--text2);padding-left:1.1rem;margin-top:.5rem">
+        <li style="margin-bottom:.4rem"><strong>Zero hard CTE dual credits</strong> &mdash; 40 articulations, all academic. Massive missed opportunity.</li>
+        <li style="margin-bottom:.4rem"><strong>Health Sciences lacks depth</strong> &mdash; No CNA certification (Albany has this). Only basic First Aid/CPR for College Now.</li>
+        <li style="margin-bottom:.4rem"><strong>No Agriculture/FFA</strong> &mdash; Despite proximity to OSU's ag programs.</li>
+        <li style="margin-bottom:.4rem"><strong>Automotive is shallow</strong> &mdash; 2 courses at each campus. Neither articulates with LBCC's full Auto Tech AAS.</li>
+        <li style="margin-bottom:.4rem"><strong>CTE pathway naming inconsistency</strong> &mdash; District website vs. school catalogs don't match.</li>
+        <li style="margin-bottom:.4rem"><strong>No dedicated CTE center</strong> &mdash; Salem-Keizer (CTEC) and Eugene (CALCI) both have one.</li>
+      </ul>
+    </div>
+
+    <div class="card" style="border-top:3px solid var(--blue)">
+      <h3 style="color:var(--blue)">Where to Move</h3>
+      <ul style="font-size:.8rem;color:var(--text2);padding-left:1.1rem;margin-top:.5rem">
+        <li style="margin-bottom:.4rem"><strong>LBCC CTE articulations</strong> &mdash; Priority: Welding/Fabrication, Machine Tool, Automotive Tech, Culinary, Health Sciences (CNA, Medical Assistant).</li>
+        <li style="margin-bottom:.4rem"><strong>Health Sciences expansion</strong> &mdash; Add CNA track. Healthcare = 16% local employment, #1 growth statewide (+40,400 jobs by 2034).</li>
+        <li style="margin-bottom:.4rem"><strong>Consolidate Automotive</strong> &mdash; One campus hub instead of shallow sequence at both.</li>
+        <li style="margin-bottom:.4rem"><strong>Unify Metals/Woodworking naming</strong> &mdash; Same skills, different labels across campuses.</li>
+        <li style="margin-bottom:.4rem"><strong>CS College Now</strong> &mdash; 5-course pathway with zero articulation is the lowest-hanging fruit.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ LABOR MARKET ═══ -->
+<section id="labor">
+  <div class="reveal">
+    <div class="sec-label">Verified Data</div>
+    <h2 class="sec-title">Regional Labor Market Reality</h2>
+    <p class="sec-desc">All figures verified against BLS, Oregon Employment Department (QualityInfo.org), and official sources. Corrections noted where original research was inaccurate.</p>
+  </div>
+
+  <div class="stats reveal">
+    <div class="stat"><div class="stat-val">$33.96</div><div class="stat-label">Mean Hourly Wage (Corvallis)</div></div>
+    <div class="stat"><div class="stat-val">$61.80</div><div class="stat-label">Healthcare Practitioners/hr</div></div>
+    <div class="stat"><div class="stat-val">$50.93</div><div class="stat-label">Architecture & Engineering/hr</div></div>
+    <div class="stat"><div class="stat-val">16%</div><div class="stat-label">Healthcare % of Employment</div></div>
+    <div class="stat"><div class="stat-val">9,300+</div><div class="stat-label">New Jobs (Linn-Benton 2022-32)</div></div>
+  </div>
+
+  <div class="grid grid-2 reveal">
+    <div class="card">
+      <h3>Top Growth Sectors &mdash; Linn-Benton Counties (2022-2032)</h3>
+      <div style="margin-top:1rem">
+        <div class="bar-row"><div class="bar-label">Construction</div><div class="bar-track"><div class="bar-fill anim-bar" style="background:linear-gradient(90deg,var(--blue),var(--cyan))" data-w="75">+15% / +660 jobs</div></div></div>
+        <div class="bar-row"><div class="bar-label">Healthcare/Social</div><div class="bar-track"><div class="bar-fill anim-bar" style="background:linear-gradient(90deg,var(--green),#34d399)" data-w="90">+2,570 jobs (largest)</div></div></div>
+        <div class="bar-row"><div class="bar-label">Leisure/Hospitality</div><div class="bar-track"><div class="bar-fill anim-bar" style="background:linear-gradient(90deg,var(--purple),var(--pink))" data-w="80">Fastest growth rate</div></div></div>
+        <div class="bar-row"><div class="bar-label">Trade/Transport</div><div class="bar-track"><div class="bar-fill anim-bar" style="background:linear-gradient(90deg,var(--gold),#f97316)" data-w="60">+1,050 jobs</div></div></div>
+        <div class="bar-row"><div class="bar-label">Manufacturing</div><div class="bar-track"><div class="bar-fill anim-bar" style="background:linear-gradient(90deg,var(--red),#f97316)" data-w="10">-30 jobs (declining)</div></div></div>
+      </div>
+      <p style="font-size:.7rem;color:var(--muted);margin-top:.5rem">Source: QualityInfo.org, Oregon Employment Department 2022-2032 projections</p>
+    </div>
+
+    <div class="card">
+      <h3>Major Employers &mdash; Corvallis Area</h3>
+      <ul style="font-size:.8rem;color:var(--text2);padding-left:1.1rem;margin-top:.75rem">
+        <li style="margin-bottom:.6rem"><strong>Oregon State University</strong> &mdash; $417M research expenditures (FY2025). 100+ companies launched through innovation programs. Drives demand for STEM, engineering, agriculture, health sciences.</li>
+        <li style="margin-bottom:.6rem"><strong>Samaritan Health Services</strong> &mdash; Serves 250,000+ residents. ~$1.7B annual revenue. Good Samaritan Regional Medical Center is Corvallis's largest hospital. Drives healthcare workforce demand.</li>
+        <li style="margin-bottom:.6rem"><strong>HP Inc.</strong> &mdash; 48-year Corvallis presence. Received $53M CHIPS Act funding (Jan 2025) for semiconductor/MEMS R&D expansion. Drives engineering and advanced manufacturing demand.</li>
+      </ul>
+      <p style="font-size:.7rem;color:var(--muted);margin-top:.5rem">Sources: BLS OEWS May 2024; OSU Newsroom; NIST CHIPS awards; Samaritan Health</p>
+    </div>
+  </div>
+
+  <div class="alert alert-blue reveal" style="margin-top:1rem">
+    <strong>CTE Alignment Implication:</strong> 9 of the 15 fastest-growing occupations statewide are healthcare-related. Construction is growing 15% locally. Yet 509j has no CNA track, no construction CTE pathway at CVHS, and zero hard CTE dual credits with LBCC in any sector.
+  </div>
+</section>
+
+<!-- ═══ ALIGNMENT PARAMETERS ═══ -->
+<section id="alignment">
+  <div class="reveal">
+    <div class="sec-label">Admin Directive</div>
+    <h2 class="sec-title">Alignment Parameters</h2>
+    <p class="sec-desc">Non-negotiable constraints from district administration. Every recommendation must satisfy these.</p>
+  </div>
+
+  <div class="grid grid-2 reveal">
+    <div class="card card-sm"><h3>Aligned Grade-Level Courses</h3><p>Core and elective/CTE courses aligned across campuses at every grade level.</p></div>
+    <div class="card card-sm"><h3>Aligned Course Sequences</h3><p>Coherent progressions. Capstone courses at end of a sequence may only be at one site.</p></div>
+    <div class="card card-sm"><h3>Yearlong + Semester Mix</h3><p>Except in core, provide both. Semester courses serve as exploratory on-ramps.</p></div>
+    <div class="card card-sm"><h3>Full Standards Coverage</h3><p>Sequences must cover all grade-level skills standards in the content area.</p></div>
+    <div class="card card-sm"><h3>Singleton Reduction</h3><p>Eliminate one-off courses that don't connect to a pathway.</p></div>
+    <div class="card card-sm"><h3>Overall Course Reduction</h3><p>Fewer, stronger pathways. Every remaining course earns its place with data.</p></div>
+    <div class="card card-sm"><h3>Increase Advanced Opportunities</h3><p>Expand honors, AP, and dual credit (College Now) &mdash; especially in CTE.</p></div>
+    <div class="card card-sm"><h3>Support & Scaffolded Classes</h3><p>Ensure scaffolding for students who need it. Acceleration for those ready.</p></div>
+  </div>
+</section>
+
+<!-- ═══ TEAM TIME ═══ -->
+<section id="teamtime">
+  <div class="reveal">
+    <div class="sec-label">Collaboration Protocol</div>
+    <h2 class="sec-title">Combined Team Time</h2>
+    <p class="sec-desc">Structured cross-campus collaboration. Faculty from both schools work together with data.</p>
+  </div>
+
+  <div class="compare reveal">
+    <div class="card">
+      <h3 style="color:var(--blue);margin-bottom:.75rem">What to Discuss</h3>
+      <ul class="checklist">
+        <li><span class="check-icon" style="background:rgba(79,140,255,0.12);color:var(--blue)">&#10003;</span><div><strong>Where already aligned</strong> &mdash; Course titles, content, sequences, duration</div></li>
+        <li><span class="check-icon" style="background:rgba(245,158,11,0.12);color:var(--gold)">&#9888;</span><div><strong>Areas of misalignment</strong> &mdash; Naming differences, sequence gaps, prerequisite inconsistencies</div></li>
+        <li><span class="check-icon" style="background:rgba(239,68,68,0.12);color:var(--red)">?</span><div><strong>Areas of concern</strong> &mdash; Do courses serve the breadth of standards?</div></li>
+        <li><span class="check-icon" style="background:rgba(168,85,247,0.12);color:var(--purple)">&#8596;</span><div><strong>Student spectrum</strong> &mdash; Support for scaffolding AND acceleration?</div></li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3 style="color:var(--purple);margin-bottom:.75rem">What to Do</h3>
+      <ul class="checklist">
+        <li><span class="check-icon" style="background:rgba(168,85,247,0.12);color:var(--purple)">1</span><div><strong>Create 1-2 draft pathways</strong> &mdash; Poster format showing aligned sequence from intro to capstone</div></li>
+        <li><span class="check-icon" style="background:rgba(168,85,247,0.12);color:var(--purple)">2</span><div><strong>Prepare for gallery walk</strong> &mdash; Posters will be shared for cross-team feedback</div></li>
+        <li><span class="check-icon" style="background:rgba(168,85,247,0.12);color:var(--purple)">3</span><div><strong>Record admin questions</strong> &mdash; Document in shared Google Sheet for next meeting</div></li>
+        <li><span class="check-icon" style="background:rgba(245,158,11,0.12);color:var(--gold)">&#9733;</span><div><strong>If stuck</strong> &mdash; Look at other Oregon district models. Request admin via chat. Break from "how we've always done it."</div></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="alert alert-gold reveal" style="margin-top:1rem">
+    <strong>Comparable districts to study:</strong> Salem-Keizer (50 CTE programs, CTEC center), Bend-La Pine (35 programs), Eugene 4J (CALCI center), Greater Albany (CNA certification, PLTW). What do they offer that we don't?
+  </div>
+</section>
+
+<!-- ═══ DELIVERABLES ═══ -->
+<section id="deliverables">
+  <div class="reveal">
+    <div class="sec-label">Outputs</div>
+    <h2 class="sec-title">Deliverables</h2>
+  </div>
+
+  <div class="grid grid-2 reveal">
+    <div class="card card-sm"><div class="check-icon" style="background:rgba(79,140,255,0.12);color:var(--blue);display:inline-flex;margin-bottom:.5rem">1</div><h3>Cross-Campus Alignment Map</h3><p>Grade-level matrix of all CTE/elective courses &mdash; titles, content, sequences, duration, prerequisites &mdash; CHS vs CVHS side-by-side.</p></div>
+    <div class="card card-sm"><div class="check-icon" style="background:rgba(239,68,68,0.12);color:var(--red);display:inline-flex;margin-bottom:.5rem">2</div><h3>Singleton & Redundancy Audit</h3><p>Inventory of singletons to cut, parallel sections to consolidate, and naming misalignments to resolve. Net course reduction target.</p></div>
+    <div class="card card-sm"><div class="check-icon" style="background:rgba(16,185,129,0.12);color:var(--green);display:inline-flex;margin-bottom:.5rem">3</div><h3>Aligned Pathway Sequences</h3><p>1-2 draft pathways per content area: intro to capstone, yearlong/semester mix, with hub/spoke designation for advanced courses.</p></div>
+    <div class="card card-sm"><div class="check-icon" style="background:rgba(168,85,247,0.12);color:var(--purple);display:inline-flex;margin-bottom:.5rem">4</div><h3>Advanced Opportunities Plan</h3><p>Specific recommendations to increase honors, AP, and College Now CTE articulations. Prioritized by labor market demand and LBCC readiness.</p></div>
+    <div class="card card-sm"><div class="check-icon" style="background:rgba(0,212,255,0.12);color:var(--cyan);display:inline-flex;margin-bottom:.5rem">5</div><h3>Support & Scaffolding Framework</h3><p>Every pathway includes support classes for students who need them and acceleration for advanced learners.</p></div>
+    <div class="card card-sm"><div class="check-icon" style="background:rgba(245,158,11,0.12);color:var(--gold);display:inline-flex;margin-bottom:.5rem">6</div><h3>Standards Coverage Audit</h3><p>Verify sequences cover all grade-level skills standards. Identify gaps. Propose course modifications.</p></div>
+    <div class="card card-sm"><div class="check-icon" style="background:rgba(236,72,153,0.12);color:var(--pink);display:inline-flex;margin-bottom:.5rem">7</div><h3>Prioritized Dual-Credit Roadmap</h3><p>Top CTE courses for fast-tracked LBCC College Now approval: CS, Welding/Metals, Automotive, Culinary, Health Sciences.</p></div>
+    <div class="card card-sm"><div class="check-icon" style="background:rgba(79,140,255,0.12);color:var(--blue);display:inline-flex;margin-bottom:.5rem">8</div><h3>Executive Restructuring Playbook</h3><p>Bottom-line recommendations for 509j leadership. Divest/invest matrix, hub/spoke plan, budget impacts, 36-month metrics.</p></div>
+  </div>
+</section>
+
+</div>
+
+<!-- ═══ ADDENDUM: TEACHERS & FTE ═══ -->
+<section id="teachers" style="border-top:2px solid var(--border);padding-top:4rem">
+  <div class="reveal">
+    <div class="sec-label">Addendum</div>
+    <h2 class="sec-title">CTE Teacher Assignments & FTE Estimates</h2>
+    <p class="sec-desc">Teacher names verified against staff directories. FTE estimates based on number of distinct CTE course preps and sections per catalog. A standard full-time load is ~6 sections/day. FTE shown is estimated CTE allocation only &mdash; teachers may also carry non-CTE sections.</p>
+  </div>
+
+  <div class="alert alert-gold reveal" style="margin-bottom:2rem">
+    <strong>Important:</strong> FTE figures below are <strong>estimates</strong> based on course catalog listings, not verified against actual master schedules. Actual FTE depends on section counts, enrollment, and prep periods which require district data to confirm. These estimates are starting points for alignment discussions.
+  </div>
+
+  <!-- CHS Teachers -->
+  <div class="reveal">
+    <h3 style="font-size:1.1rem;margin-bottom:1rem;color:var(--blue)">Corvallis High School &mdash; CTE Staff</h3>
+    <div class="tbl-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Teacher</th>
+            <th>Directory Title</th>
+            <th>CTE Pathway(s)</th>
+            <th>CTE Courses Taught</th>
+            <th># CTE Preps</th>
+            <th>Est. CTE FTE</th>
+            <th>Notes</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Randy Macdonald</strong></td>
+            <td>Computer Science Teacher</td>
+            <td><span class="tag t-cte">Computer Science</span></td>
+            <td>Intro CS 1, Intro CS 2, AP CS Principles, AP CS Programming, Advanced Topics in CS</td>
+            <td>5</td>
+            <td><strong>~1.0</strong></td>
+            <td>Full CTE load. Also serves CVHS students via shuttle. Sole CS teacher for entire district &mdash; single point of failure.</td>
+          </tr>
+          <tr>
+            <td><strong>JJ Keim</strong></td>
+            <td>Shop/Industrial Education Teacher</td>
+            <td><span class="tag t-cte">Manufacturing</span> <span class="tag t-cte">Automotive</span></td>
+            <td>Metals 1, 2A, 2B, Welding, Industrial Design 1 &amp; 2, Capstone: Vehicular Design, Automotive 1 &amp; 2</td>
+            <td>9</td>
+            <td><strong>~1.0</strong></td>
+            <td>Carries 2 full CTE pathways (Manufacturing + Automotive). Also likely teaches non-CTE Woods and Architecture. Extremely high prep count &mdash; alignment could reduce load.</td>
+          </tr>
+          <tr>
+            <td><strong>Jayce Giddens</strong></td>
+            <td>Photography, Graphics, Digital Media, Business &amp; Design</td>
+            <td><span class="tag t-cte">Digital Arts</span></td>
+            <td>Digital Media 1/2, Advanced Digital Arts (Bus &amp; Design), Beginning Graphic Design, Graphic Design 2/3/4, Photography 1, Photography 2 &amp; 3</td>
+            <td>6</td>
+            <td><strong>~1.0</strong></td>
+            <td>Full CTE load. Also has College Now articulation (ART 120). Yearbook may be additional non-CTE section.</td>
+          </tr>
+          <tr>
+            <td><strong>Alyssa Reynolds</strong></td>
+            <td>Family &amp; Consumer Studies / Children's School</td>
+            <td><span class="tag t-cte">Early Childhood Ed</span></td>
+            <td>Child Development 1, 2, 3</td>
+            <td>3</td>
+            <td><strong>~0.5</strong></td>
+            <td>3 CTE preps (each 1.0cr yearlong). College Now link to ED 101. Preschool operation adds non-instructional load. Remaining FTE likely non-CTE duties or preschool management.</td>
+          </tr>
+          <tr>
+            <td><strong>Molly Wolfe</strong></td>
+            <td>Culinary Arts Teacher</td>
+            <td><span class="tag t-warn">Non-CTE at CHS</span></td>
+            <td>Bake(d) Good(s), Foods &amp; Nutrition, International Foods 1 &amp; 2, Senior Foods</td>
+            <td>0 CTE</td>
+            <td><strong>~0.0 CTE</strong></td>
+            <td>Title says "Culinary Arts" but all CHS food courses are non-CTE. Actual CTE Culinary is at CVHS (Sass). Wolfe's courses could potentially be upgraded to CTE with curriculum alignment.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div style="margin-top:.75rem;padding:.75rem 1rem;background:var(--card);border:1px solid var(--border);border-radius:8px;font-size:.78rem;color:var(--text2)">
+      <strong>CHS Support Staff:</strong> Libby Beall (Preschool Assistant &mdash; supports Child Dev program), Danielle White (Career Center Specialist / Assessment Tech), Emily Dray (Career-Related Learning &mdash; Beyond CHS)
+    </div>
+  </div>
+
+  <!-- CVHS Teachers -->
+  <div class="reveal" style="margin-top:3rem">
+    <h3 style="font-size:1.1rem;margin-bottom:1rem;color:var(--purple)">Crescent Valley High School &mdash; CTE Staff</h3>
+    <div class="tbl-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Teacher</th>
+            <th>Directory Title</th>
+            <th>CTE Pathway(s)</th>
+            <th>CTE Courses Taught</th>
+            <th># CTE Preps</th>
+            <th>Est. CTE FTE</th>
+            <th>Notes</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Adam Kirsch</strong></td>
+            <td>Science/Engineering Teacher</td>
+            <td><span class="tag t-cte">Pre-Engineering</span></td>
+            <td>IDEA, STEAM, DREAM, Architecture &amp; Micro-Construction</td>
+            <td>4</td>
+            <td><strong>~0.5&ndash;0.7</strong></td>
+            <td>Split between Science and Engineering. Engineering courses (IDEA/STEAM/DREAM) are unique to CVHS &mdash; no CHS equivalent. Remaining load likely science sections.</td>
+          </tr>
+          <tr>
+            <td><strong>Andy McAteer</strong></td>
+            <td>Industrial Arts</td>
+            <td><span class="tag t-cte">Pre-Engineering</span></td>
+            <td>Metals 1/2, Woodworking 1-4, Carpentry 1, Automotive 1 &amp; 2</td>
+            <td>7+</td>
+            <td><strong>~1.0</strong></td>
+            <td>Carries industrial side of Pre-Engineering. Automotive overlaps with CHS (Keim). Woodworking is CTE at CVHS but not at CHS (naming misalignment). High prep count.</td>
+          </tr>
+          <tr>
+            <td><strong>Emily Sass</strong></td>
+            <td>Culinary Teacher</td>
+            <td><span class="tag t-cte">Culinary Arts</span></td>
+            <td>Foods for Life, Baking and Pastries, Culinary Arts 1, Culinary Arts 2</td>
+            <td>4</td>
+            <td><strong>~0.7&ndash;1.0</strong></td>
+            <td>District's only CTE Culinary pathway. CHS students access Culinary 1 &amp; 2 here. No LBCC articulation despite LBCC offering Culinary Arts. High articulation opportunity.</td>
+          </tr>
+          <tr>
+            <td><strong>Keith Moses</strong></td>
+            <td>Art Teacher</td>
+            <td><span class="tag t-cte">Design &amp; Applied Arts</span></td>
+            <td>Ceramics (BEG/INT/ADV), AP Art 2D/3D, plus likely additional art CTE courses</td>
+            <td>4+</td>
+            <td><strong>~0.7&ndash;1.0</strong></td>
+            <td>Ceramics INT/ADV have College Now articulation (ART 154/254). Directory lists "Art Teacher" broadly; exact CTE vs. non-CTE section split needs master schedule data.</td>
+          </tr>
+          <tr>
+            <td><strong>Stephanie Reinwald</strong></td>
+            <td>Applied Technology &amp; Art Teacher</td>
+            <td><span class="tag t-cte">Design &amp; Applied Arts</span></td>
+            <td>Glass Arts (BEG/INT/ADV), Jewelry (BEG/INT/ADV/PROF), Sculpture, Studio Technician</td>
+            <td>5+</td>
+            <td><strong>~0.7&ndash;1.0</strong></td>
+            <td>Glass Arts and Jewelry are CTE-designated. Sculpture levels unclear on CTE status. Internship in Art and Cadet Teaching also CTE. Unique courses &mdash; no CHS equivalent.</td>
+          </tr>
+          <tr>
+            <td><strong>Kevin Freedman</strong></td>
+            <td>Digital Arts Teacher</td>
+            <td><span class="tag t-cte">Film &amp; Video / Digital Imaging</span></td>
+            <td>Filmmaking 1, Advanced Filmmaking 2-4, Film Studies 1/2, Digital Photography 1/2, Digital Design 1/2, CVTV Broadcasting</td>
+            <td>8+</td>
+            <td><strong>~1.0</strong></td>
+            <td>Carries entire Film/Video/Digital Imaging pathway. Very high prep count. CHS students access filmmaking courses here. No LBCC articulation for any film course.</td>
+          </tr>
+          <tr>
+            <td><strong>Julie Serna</strong></td>
+            <td>Child Development / Family &amp; Consumer Studies</td>
+            <td><span class="tag t-cte">Early Childhood Ed</span></td>
+            <td>Child Development 1/2, Cadet Teaching &mdash; Child Dev</td>
+            <td>3</td>
+            <td><strong>~0.5</strong></td>
+            <td>Parallel to CHS's Reynolds. Both campuses have ECE &mdash; alignment question: consolidate or maintain for access equity?</td>
+          </tr>
+          <tr>
+            <td><strong>Catherine Corkery</strong></td>
+            <td>PE/Health Teacher</td>
+            <td><span class="tag t-cte">Health Sciences</span></td>
+            <td>Sports and Health</td>
+            <td>1 CTE</td>
+            <td><strong>~0.15</strong></td>
+            <td>Primarily PE/Health. Sports and Health is CTE; also has College Now link (HE 110/PE 231). Remaining load is non-CTE PE/Health sections.</td>
+          </tr>
+          <tr>
+            <td><strong>Kristina Stone</strong></td>
+            <td>Health/Leadership Teacher</td>
+            <td><span class="tag t-cte">Health Sciences</span></td>
+            <td>Health 2 (Health Lifestyles)</td>
+            <td>1 CTE</td>
+            <td><strong>~0.15</strong></td>
+            <td>Health 2 has College Now link (HE 110/PE 231). Also teaches Leadership (non-CTE). Small CTE footprint within broader load.</td>
+          </tr>
+          <tr>
+            <td><strong>Aubrey Mendonca</strong></td>
+            <td>Health Teacher</td>
+            <td><span class="tag t-cte">Health Sciences</span></td>
+            <td>Health Occupations, Intro to Health/Medical Careers</td>
+            <td>2</td>
+            <td><strong>~0.3&ndash;0.5</strong></td>
+            <td>Health Occupations is the deepest health CTE course (CPR/First Aid cert, clinical rotations). Available to CHS students. Key teacher if Health Sciences pathway expands.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div style="margin-top:.75rem;padding:.75rem 1rem;background:var(--card);border:1px solid var(--border);border-radius:8px;font-size:.78rem;color:var(--text2)">
+      <strong>CVHS Support Staff:</strong> Cherie Martin (EA &mdash; Family/Consumer Studies), Cliff Kirkpatrick (AP Coordinator / College &amp; Career Planning &mdash; Beyond CV)
+    </div>
+  </div>
+
+  <!-- FTE Summary -->
+  <div class="reveal" style="margin-top:3rem">
+    <h3 style="font-size:1.1rem;margin-bottom:1rem">District CTE FTE Summary (Estimated)</h3>
+    <div class="compare">
+      <div class="card">
+        <h3 style="color:var(--blue);margin-bottom:.75rem">CHS &mdash; Est. ~3.5 CTE FTE</h3>
+        <div class="bar-row"><div class="bar-label">Macdonald (CS)</div><div class="bar-track"><div class="bar-fill anim-bar" style="background:linear-gradient(90deg,var(--blue),var(--cyan))" data-w="100">~1.0 FTE</div></div></div>
+        <div class="bar-row"><div class="bar-label">Keim (Mfg+Auto)</div><div class="bar-track"><div class="bar-fill anim-bar" style="background:linear-gradient(90deg,var(--blue),var(--cyan))" data-w="100">~1.0 FTE</div></div></div>
+        <div class="bar-row"><div class="bar-label">Giddens (Digital)</div><div class="bar-track"><div class="bar-fill anim-bar" style="background:linear-gradient(90deg,var(--blue),var(--cyan))" data-w="100">~1.0 FTE</div></div></div>
+        <div class="bar-row"><div class="bar-label">Reynolds (ECE)</div><div class="bar-track"><div class="bar-fill anim-bar" style="background:linear-gradient(90deg,var(--blue),var(--cyan))" data-w="50">~0.5 FTE</div></div></div>
+        <div class="bar-row"><div class="bar-label">Wolfe (Foods)</div><div class="bar-track"><div class="bar-fill anim-bar" style="background:linear-gradient(90deg,var(--muted),var(--muted))" data-w="5">0 CTE</div></div></div>
+      </div>
+      <div class="card">
+        <h3 style="color:var(--purple);margin-bottom:.75rem">CVHS &mdash; Est. ~5.0&ndash;6.0 CTE FTE</h3>
+        <div class="bar-row"><div class="bar-label">McAteer (Ind.)</div><div class="bar-track"><div class="bar-fill anim-bar" style="background:linear-gradient(90deg,var(--purple),var(--pink))" data-w="100">~1.0 FTE</div></div></div>
+        <div class="bar-row"><div class="bar-label">Freedman (Film)</div><div class="bar-track"><div class="bar-fill anim-bar" style="background:linear-gradient(90deg,var(--purple),var(--pink))" data-w="100">~1.0 FTE</div></div></div>
+        <div class="bar-row"><div class="bar-label">Sass (Culinary)</div><div class="bar-track"><div class="bar-fill anim-bar" style="background:linear-gradient(90deg,var(--purple),var(--pink))" data-w="85">~0.7&ndash;1.0</div></div></div>
+        <div class="bar-row"><div class="bar-label">Moses (Arts)</div><div class="bar-track"><div class="bar-fill anim-bar" style="background:linear-gradient(90deg,var(--purple),var(--pink))" data-w="85">~0.7&ndash;1.0</div></div></div>
+        <div class="bar-row"><div class="bar-label">Reinwald (Arts)</div><div class="bar-track"><div class="bar-fill anim-bar" style="background:linear-gradient(90deg,var(--purple),var(--pink))" data-w="85">~0.7&ndash;1.0</div></div></div>
+        <div class="bar-row"><div class="bar-label">Kirsch (Eng.)</div><div class="bar-track"><div class="bar-fill anim-bar" style="background:linear-gradient(90deg,var(--purple),var(--pink))" data-w="60">~0.5&ndash;0.7</div></div></div>
+        <div class="bar-row"><div class="bar-label">Serna (ECE)</div><div class="bar-track"><div class="bar-fill anim-bar" style="background:linear-gradient(90deg,var(--purple),var(--pink))" data-w="50">~0.5 FTE</div></div></div>
+        <div class="bar-row"><div class="bar-label">Health (3 staff)</div><div class="bar-track"><div class="bar-fill anim-bar" style="background:linear-gradient(90deg,var(--purple),var(--pink))" data-w="40">~0.3&ndash;0.5 ea</div></div></div>
+      </div>
+    </div>
+
+    <div class="alert alert-blue reveal" style="margin-top:1.25rem">
+      <strong>Key FTE observations:</strong>
+      <ul style="margin-top:.4rem;padding-left:1.2rem;font-size:.82rem">
+        <li style="margin-bottom:.3rem"><strong>Macdonald is a district-wide single point of failure</strong> for CS &mdash; if he leaves, the entire 5-course pathway across both campuses collapses.</li>
+        <li style="margin-bottom:.3rem"><strong>Keim carries 9+ CTE preps</strong> across 2 pathways (Manufacturing + Automotive). Alignment could reduce prep burden by consolidating Automotive to one campus.</li>
+        <li style="margin-bottom:.3rem"><strong>CVHS carries ~1.5&ndash;2.5 more CTE FTE</strong> than CHS, reflecting its broader pathway count (6 vs 5).</li>
+        <li style="margin-bottom:.3rem"><strong>Health Sciences CTE at CVHS is spread thin</strong> across 3 teachers (Corkery, Stone, Mendonca) with small CTE fractions each. Consolidating to a dedicated health CTE teacher could deepen the pathway.</li>
+        <li style="margin-bottom:.3rem"><strong>Wolfe (CHS) has zero CTE sections</strong> despite a "Culinary Arts" title. Potential to convert Foods &amp; Nutrition or International Foods to CTE with curriculum alignment to LBCC standards.</li>
+        <li style="margin-bottom:.3rem"><strong>ECE runs parallel</strong> at both campuses (Reynolds at CHS, Serna at CVHS) at ~0.5 FTE each. Total ~1.0 FTE district-wide &mdash; could consolidate or differentiate levels.</li>
+      </ul>
+    </div>
+
+    <div class="alert alert-gold reveal" style="margin-top:.75rem">
+      <strong>Action needed:</strong> These FTE estimates require validation against actual master schedules and section counts from administration. The estimates here are based solely on catalog course listings and staff directory titles.
+    </div>
+  </div>
+</section>
+
+<footer>
+  <p>509j CTE Alignment Dashboard &mdash; Corvallis High School &bull; Crescent Valley High School &bull; LBCC College Now</p>
+  <p style="margin-top:.25rem">Data sources: School course catalogs (2026-27), district CTE page, LBCC College Now CSVs, BLS OEWS May 2024, Oregon Employment Dept (QualityInfo.org)</p>
+</footer>
+
+<script>
+(function(){
+  // Scroll reveal
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => { if(e.isIntersecting){e.target.classList.add('visible');obs.unobserve(e.target)} })
+  },{threshold:0.08});
+  document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+
+  // Tabs (generic)
+  document.querySelectorAll('.tab-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const parent = btn.closest('section') || btn.closest('.container');
+      const nav = btn.parentElement;
+      nav.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      // Find sibling tab contents
+      let sibling = nav.nextElementSibling;
+      while(sibling && !sibling.classList.contains('tab-nav') && !sibling.matches('section')) {
+        if(sibling.classList.contains('tab-content')) {
+          sibling.classList.remove('active');
+          if(sibling.id === 'tab-' + btn.dataset.tab) sibling.classList.add('active');
+        }
+        sibling = sibling.nextElementSibling;
+      }
+    });
+  });
+
+  // Nav active state
+  const sections = document.querySelectorAll('section[id]');
+  const navLinks = document.querySelectorAll('.nav-links a');
+  window.addEventListener('scroll', () => {
+    let cur = '';
+    sections.forEach(s => { if(scrollY >= s.offsetTop - 150) cur = s.id; });
+    navLinks.forEach(a => {
+      a.classList.toggle('active', a.getAttribute('href') === '#' + cur);
+    });
+  });
+
+  // Animated bars
+  const barObs = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if(e.isIntersecting) {
+        e.target.querySelectorAll('.anim-bar').forEach((bar,i) => {
+          setTimeout(() => { bar.style.width = bar.dataset.w + '%'; }, i * 80);
+        });
+        barObs.unobserve(e.target);
+      }
+    });
+  },{threshold:0.3});
+  document.querySelectorAll('.card').forEach(c => { if(c.querySelector('.anim-bar')) barObs.observe(c); });
+})();
+</script>
+</body>
+</html>
