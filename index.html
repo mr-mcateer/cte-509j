@@ -141,22 +141,98 @@ footer{border-top:1px solid var(--border);padding:2rem 1.5rem;text-align:center;
 <!-- ═══ OVERVIEW ═══ -->
 <section id="overview">
   <div class="reveal">
-    <div class="sec-label">District Snapshot</div>
-    <h1 class="sec-title">Corvallis 509j CTE: Where We Stand</h1>
-    <p class="sec-desc">A data-driven reference for aligning Career & Technical Education across Corvallis High School and Crescent Valley High School. Every claim below is sourced from school catalogs, district records, LBCC articulation data, and BLS/Oregon Employment Department statistics.</p>
+    <h1 class="sec-title" style="font-size:clamp(1.6rem,4vw,2.4rem)">Corvallis 509j CTE Alignment</h1>
+    <p style="color:var(--text2);font-size:.85rem;margin-bottom:2.5rem">What we found across CHS and CVHS &mdash; and what to do about it. <span style="color:var(--muted);font-size:.75rem">Scroll down for full course data, College Now tables, labor market analysis, and teacher FTE.</span></p>
   </div>
 
-  <div class="stats reveal">
-    <div class="stat"><div class="stat-val">5</div><div class="stat-label">CHS CTE Programs</div></div>
-    <div class="stat"><div class="stat-val">5-6</div><div class="stat-label">CVHS CTE Programs</div></div>
-    <div class="stat"><div class="stat-val">0</div><div class="stat-label">Hard CTE Dual Credits</div></div>
-    <div class="stat"><div class="stat-val">20</div><div class="stat-label">CHS College Now</div></div>
-    <div class="stat"><div class="stat-val">20</div><div class="stat-label">CVHS College Now</div></div>
-    <div class="stat"><div class="stat-val">11</div><div class="stat-label">Shared Articulations</div></div>
+  <!-- ─── WHAT WE FOUND ─── -->
+  <div class="reveal">
+    <h2 style="font-size:1.15rem;font-weight:800;margin-bottom:1.25rem;color:var(--text)">What We Found</h2>
+
+    <div style="display:grid;gap:.75rem;margin-bottom:2rem">
+
+      <div class="card card-sm" style="border-left:3px solid var(--red);display:flex;gap:1rem;align-items:start">
+        <div style="font-size:1.5rem;line-height:1">1</div>
+        <div>
+          <h3 style="color:var(--red);font-size:.9rem">Zero hard CTE dual credits at either campus</h3>
+          <p>All 40 College Now articulations are academic (English, Math, History, Spanish). Not a single one in Computer Science, Engineering, Manufacturing, Health Sciences, Business, Automotive, Culinary, or Welding &mdash; despite having CTE pathways in all of these.</p>
+        </div>
+      </div>
+
+      <div class="card card-sm" style="border-left:3px solid var(--gold);display:flex;gap:1rem;align-items:start">
+        <div style="font-size:1.5rem;line-height:1">2</div>
+        <div>
+          <h3 style="color:var(--gold);font-size:.9rem">Automotive runs at both campuses but goes nowhere</h3>
+          <p>2 courses at CHS (Keim) and 2 at CVHS (McAteer). Neither connects to LBCC's full Automotive Technology AAS. A shallow sequence duplicated across campuses with no post-secondary pathway.</p>
+        </div>
+      </div>
+
+      <div class="card card-sm" style="border-left:3px solid var(--gold);display:flex;gap:1rem;align-items:start">
+        <div style="font-size:1.5rem;line-height:1">3</div>
+        <div>
+          <h3 style="color:var(--gold);font-size:.9rem">Same skills, different names across campuses</h3>
+          <p>CHS calls it "Manufacturing" (Metals, Welding, Industrial Design). CVHS puts Metals and Woodworking under "Pre-Engineering." Woodworking is CTE at CVHS but <em>not</em> CTE at CHS. Students and families see inconsistent course names for overlapping content.</p>
+        </div>
+      </div>
+
+      <div class="card card-sm" style="border-left:3px solid var(--red);display:flex;gap:1rem;align-items:start">
+        <div style="font-size:1.5rem;line-height:1">4</div>
+        <div>
+          <h3 style="color:var(--red);font-size:.9rem">Healthcare is the #1 regional employer &mdash; our pathway doesn't match</h3>
+          <p>Healthcare = 16% of local jobs, 9 of 15 fastest-growing occupations statewide. CVHS has Health Sciences courses but no CNA certification (Albany does). The only College Now health link is basic First Aid/CPR (1 credit).</p>
+        </div>
+      </div>
+
+      <div class="card card-sm" style="border-left:3px solid var(--green);display:flex;gap:1rem;align-items:start">
+        <div style="font-size:1.5rem;line-height:1">5</div>
+        <div>
+          <h3 style="color:var(--green);font-size:.9rem">Some things are working well</h3>
+          <p><strong>Computer Science (CHS)</strong> has a deep 4-year sequence with 2 AP courses serving both campuses. <strong>Pre-Engineering (CVHS)</strong> has unique IDEA/STEAM/DREAM courses. <strong>Digital Arts (CHS)</strong> and <strong>Film (CVHS)</strong> are natural complements. <strong>Ceramics (CVHS)</strong> already has LBCC articulation.</p>
+        </div>
+      </div>
+
+    </div>
   </div>
 
-  <div class="alert alert-red reveal">
-    <strong>Critical Finding:</strong> Across 40 total College Now articulations at both campuses, <strong>zero</strong> are in Computer Science, Engineering, Manufacturing, Business, Advanced Health Sciences, Automotive, Welding, Culinary, or any hard CTE sector. Every articulation is academic transfer (English, Math, History, Spanish, Art, basic Health/PE).
+  <!-- ─── WHAT TO DO ─── -->
+  <div class="reveal">
+    <h2 style="font-size:1.15rem;font-weight:800;margin-bottom:1.25rem;color:var(--text)">What To Do About It</h2>
+
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:.75rem;margin-bottom:1.5rem">
+
+      <div class="card card-sm" style="border-left:3px solid var(--blue)">
+        <h3 style="font-size:.85rem"><span style="color:var(--blue)">&#9654;</span> Get CTE courses into College Now</h3>
+        <p>Lowest-hanging fruit: CS (5 courses, 0 articulations), Welding/Metals (aligns with LBCC Welding &amp; Fabrication), Culinary (LBCC has program), Health Occupations (LBCC has CNA, Medical Assistant). Start with the strongest syllabus matches.</p>
+      </div>
+
+      <div class="card card-sm" style="border-left:3px solid var(--blue)">
+        <h3 style="font-size:.85rem"><span style="color:var(--blue)">&#9654;</span> Consolidate Automotive to one campus</h3>
+        <p>Pick CHS or CVHS as the hub. Free up sections at the other campus. Use those sections to deepen a pathway that actually articulates to LBCC.</p>
+      </div>
+
+      <div class="card card-sm" style="border-left:3px solid var(--blue)">
+        <h3 style="font-size:.85rem"><span style="color:var(--blue)">&#9654;</span> Unify course naming district-wide</h3>
+        <p>"Manufacturing" vs. "Pre-Engineering" for overlapping content. CTE vs. non-CTE for the same Woodworking course. Fix the naming so students and families see one coherent catalog.</p>
+      </div>
+
+      <div class="card card-sm" style="border-left:3px solid var(--blue)">
+        <h3 style="font-size:.85rem"><span style="color:var(--blue)">&#9654;</span> Deepen Health Sciences at CVHS</h3>
+        <p>Add CNA certification track (Albany model). Push for LBCC articulation beyond First Aid. Healthcare is the region's biggest employer and fastest-growing sector &mdash; the pathway should reflect that.</p>
+      </div>
+
+      <div class="card card-sm" style="border-left:3px solid var(--blue)">
+        <h3 style="font-size:.85rem"><span style="color:var(--blue)">&#9654;</span> Formalize the hub model</h3>
+        <p>CS is already a CHS hub (CVHS students shuttle over). Culinary, Health Sciences, and Film are CVHS hubs. Make this official. Reduce singletons. Cut total course count by concentrating advanced offerings.</p>
+      </div>
+
+      <div class="card card-sm" style="border-left:3px solid var(--blue)">
+        <h3 style="font-size:.85rem"><span style="color:var(--blue)">&#9654;</span> Resolve the FTE imbalance</h3>
+        <p>CHS has ~3.5 CTE FTE across 5 pathways. CVHS has ~4.5&ndash;5.5 across 6. McAteer carries 7+ preps on 0.5 FTE. If pathways consolidate, FTE needs to follow.</p>
+      </div>
+
+    </div>
+
+    <p style="color:var(--muted);font-size:.75rem;margin-top:1rem">All data below is sourced from 2026-27 school catalogs, district staff directories, LBCC College Now CSVs (CHS 3/2026, CVHS 11/2025), and BLS/Oregon Employment Department statistics. Scroll for full details.</p>
   </div>
 </section>
 
