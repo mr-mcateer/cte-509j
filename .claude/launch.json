@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "bluff-site",
+      "runtimeExecutable": "python3",
+      "runtimeArgs": ["-m", "http.server", "8765", "-d", "/Users/andrewmcateer/Downloads/CTE Alignment Project"],
+      "port": 8765
+    }
+  ]
+}
