@@ -4,7 +4,7 @@
     {
       "name": "bluff-site",
       "runtimeExecutable": "python3",
-      "runtimeArgs": ["-m", "http.server", "8765", "-d", "/Users/andrewmcateer/Downloads/CTE Alignment Project"],
+      "runtimeArgs": ["-m", "http.server", "8765", "-d", "/Users/andymcateer/Desktop/Claude Projects/01_TEACHING/CTE_Alignment_Project"],
       "port": 8765
     }
   ]

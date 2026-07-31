@@ -16,7 +16,7 @@ from reportlab.platypus import (
 )
 
 W, H = letter
-OUT_DIR = "/Users/andrewmcateer/Downloads"
+OUT_DIR = "/Users/andymcateer/Downloads"
 
 # ── Colors ────────────────────────────────────────────────────────────────────
 NAVY   = colors.HexColor("#1a2744")

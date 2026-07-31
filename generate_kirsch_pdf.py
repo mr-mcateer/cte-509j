@@ -15,7 +15,7 @@ from reportlab.platypus import (
 from reportlab.platypus.flowables import Flowable
 import os
 
-OUTPUT = "/Users/andrewmcateer/Downloads/CTE Alignment Project/Kirsch_CollegeNow_Analysis_FINAL.pdf"
+OUTPUT = "/Users/andymcateer/Desktop/Claude Projects/01_TEACHING/CTE_Alignment_Project/Kirsch_CollegeNow_Analysis_FINAL.pdf"
 
 # ── Brand Colors ─────────────────────────────────────────────────────────────
 NAVY      = colors.HexColor("#1a2744")
