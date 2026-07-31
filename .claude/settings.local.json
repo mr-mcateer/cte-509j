@@ -2,18 +2,7 @@
   "permissions": {
     "allow": [
       "Bash(node kirsch_packet.js)",
-      "Read(//Users/andrewmcateer/Library/Application Support/Claude/local-agent-mode-sessions/skills-plugin/5152b9e2-b677-4d49-8020-a288e4669067/a945fcb9-96b7-44b8-9eed-922e3f787703/skills/docx/**)",
-      "Bash(python3 scripts/office/validate.py /Users/andrewmcateer/Downloads/Kirsch_LBCC_Letter.docx)",
-      "Bash(python3 scripts/office/validate.py /Users/andrewmcateer/Downloads/Kirsch_Equivalency.docx)",
-      "Bash(python3 scripts/office/validate.py /Users/andrewmcateer/Downloads/Kirsch_Credentials.docx)",
-      "Bash(python3 generate_kirsch_pdf.py)",
-      "Bash(SKILL_DIR=\"/Users/andrewmcateer/Library/Application Support/Claude/local-agent-mode-sessions/skills-plugin/5152b9e2-b677-4d49-8020-a288e4669067/a945fcb9-96b7-44b8-9eed-922e3f787703/skills/docx\")",
-      "Bash(python3 \"$SKILL_DIR/scripts/office/validate.py\" /Users/andrewmcateer/Downloads/Kirsch_LBCC_Letter.docx)",
-      "Bash(python3 \"$SKILL_DIR/scripts/office/validate.py\" /Users/andrewmcateer/Downloads/Kirsch_Equivalency.docx)",
-      "Bash(python3 \"$SKILL_DIR/scripts/office/validate.py\" /Users/andrewmcateer/Downloads/Kirsch_Credentials.docx)",
-      "Bash(python3 \"$SKILL_DIR/scripts/office/validate.py\" /Users/andrewmcateer/Downloads/Kirsch_LBCC_Letter_FINAL.docx)",
-      "Bash(python3 \"$SKILL_DIR/scripts/office/validate.py\" /Users/andrewmcateer/Downloads/Kirsch_Equivalency_FINAL.docx)",
-      "Bash(python3 \"$SKILL_DIR/scripts/office/validate.py\" /Users/andrewmcateer/Downloads/Kirsch_Credentials_FINAL.docx)"
+      "Bash(python3 generate_kirsch_pdf.py)"
     ]
   }
 }
